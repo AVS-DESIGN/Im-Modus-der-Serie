@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serialität des Zuhauses</title>
+<style>
+  :root {
+    --terra: #C4623A;
+    --terra-light: #F2E8E2;
+    --terra-dark: #8B3E22;
+    --black: #1A1A18;
+    --gray: #6B6B65;
+    --light: #FAF8F5;
+    --border: #E2D9D0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--light);
+    color: var(--black);
+    font-family: 'Futura', serif;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  header {
+    background: var(--terra);
+    color: white;
+    padding: 4rem 2rem 3rem;
+    text-align: center;
+  }
+
+  header p.eyebrow {
+    font-family: 'Futura', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--terra-dark);
+    margin-bottom: 1.5rem;
+  }
+
+  header h1 {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  header .subtitle {
+    font-family: 'Futura', Arial, sans-serif;
+    font-size: 14px;
+    color: #ffffff;
+    max-width: 480px;
+    margin: 0 auto 0.5rem;
+    line-height: 1.6;
+  }
+
+  header .subtitle-en {
+    font-family: 'Futura', Arial, sans-serif;
+    font-size: 12px;
+    color: #d7d7d7;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .intro {
+    max-width: 640px;
+    margin: 4rem auto;
+    padding: 0 2rem;
+    text-align: center;
+  }
+
+  .intro p {
+    color: var(--gray);
+    font-size: 15px;
+    margin-bottom: 0.5rem;
+  }
+
+  .intro p.en {
+    font-style: italic;
+    font-size: 13px;
+    color: #aaa;
+  }
+
+  .timeline {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem 6rem;
+  }
+
+  .object {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 0;
+    margin-bottom: 0;
+    position: relative;
+  }
+
+  .object:last-child .line {
+    display: none;
+  }
+
+  .year-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .year {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--terra);
+    letter-spacing: 0.05em;
+    padding-top: 2px;
+    white-space: nowrap;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--terra);
+    margin: 8px 0 0;
+    flex-shrink: 0;
+  }
+
+  .line {
+    width: 1px;
+    background: var(--border);
+    flex: 1;
+    min-height: 40px;
+  }
+
+  .content {
+    padding: 0 0 3rem 2rem;
+  }
+
+  .object-name {
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+  }
+
+  .object-meta {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    color: var(--terra);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.25rem;
+  }
+
+  .image-box {
+    background: var(--terra-light);
+    border-radius: 4px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+  }
+
+  .image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .image-box .placeholder {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    color: var(--terra-dark);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  .before-after {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .ba-block {
+    background: white;
+    border: 0.5px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem;
+  }
+
+  .ba-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .ba-block p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--black);
+    margin-bottom: 0.25rem;
+  }
+
+  .ba-block p.en {
+    font-size: 12px;
+    color: var(--gray);
+    font-style: italic;
+  }
+
+  .shift {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    color: var(--gray);
+    line-height: 1.6;
+    padding-top: 0.75rem;
+    border-top: 0.5px solid var(--border);
+  }
+
+  .shift em {
+    color: var(--terra-dark);
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  footer {
+    background: var(--terra);
+    color: #ffffff;
+    text-align: center;
+    padding: 2rem;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  footer span {
+    color: var(--light);
+  }
+
+  @media (max-width: 600px) {
+    .before-after { grid-template-columns: 1fr; }
+    .object { grid-template-columns: 60px 1fr; }
+    header h1 { font-size: 2.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Im Modus der Serie — Aranza V. Sánchez — HfG Offenbach 2026</p>
+  <h1>Serialität<br>des Zuhauses</h1>
+  <p class="subtitle">Wie serielle Produktion die Art, wie wir zusammenleben, verändert hat.</p>
+  <p class="subtitle-en">How serial production changed the way we live together.</p>
+</header>
+
+<div class="intro">
+  <p>Jedes Objekt hier war einmal geteilt. Dann wurde es erschwinglich — für jeden Einzelnen.</p>
+  <p class="en">Every object here was once shared. Then it became affordable — for every individual.</p>
+</div>
+
+<div class="timeline">
+
+  <!-- 1. THONET -->
+  <div class="object">
+    <div class="year-col">
+      <span class="year">1859</span>
+      <div class="dot"></div>
+      <div class="line"></div>
+    </div>
+    <div class="content">
+      <h2 class="object-name">Thonet Stuhl Nr. 14</h2>
+      <p class="object-meta">Michael Thonet — Gebrüder Thonet, Wien</p>
+      <div class="image-box"><span class="placeholder">Thonet Nr. 14</span></div>
+      <div class="before-after">
+        <div class="ba-block">
+          <span class="ba-label">Vorher / Before</span>
+          <p>Möbel waren handgefertigt, teuer und selten. Ein Stuhl war ein Besitzstück, das vererbt wurde.</p>
+          <p class="en">Furniture was handmade, expensive and rare. A chair was a possession passed down through generations.</p>
+        </div>
+        <div class="ba-block">
+          <span class="ba-label">Nachher / After</span>
+          <p>36 zerlegte Stühle in einer Transportkiste. Massenproduktion macht Möbel für alle erschwinglich — und austauschbar.</p>
+          <p class="en">36 disassembled chairs in one crate. Mass production makes furniture affordable for all — and replaceable.</p>
+        </div>
+      </div>
+      <p class="shift"><em>Serielle Logik:</em> Der erste in Serie gefertigte Gebrauchsgegenstand der Welt — der Beginn einer neuen Beziehung zwischen Objekt, Raum und Mensch. / <em>Serial logic:</em> The world's first mass-produced everyday object — the beginning of a new relationship between object, space and people.</p>
+    </div>
+  </div>
+
+  <!-- 2. FRANKFURTER KÜCHE -->
+  <div class="object">
+    <div class="year-col">
+      <span class="year">1926</span>
+      <div class="dot"></div>
+      <div class="line"></div>
+    </div>
+    <div class="content">
+      <h2 class="object-name">Frankfurter Küche</h2>
+      <p class="object-meta">Margarete Schütte-Lihotzky — Neues Frankfurt</p>
+      <div class="image-box"><span class="placeholder">Frankfurter Küche</span></div>
+      <div class="before-after">
+        <div class="ba-block">
+          <span class="ba-label">Vorher / Before</span>
+          <p>Die Küche war das Herzstück des Hauses — ein großer, gemeinsam genutzter Raum, Treffpunkt der Familie.</p>
+          <p class="en">The kitchen was the heart of the home — a large, shared space, a gathering place for the family.</p>
+        </div>
+        <div class="ba-block">
+          <span class="ba-label">Nachher / After</span>
+          <p>6,59 qm. Die Küche wird zur effizienten Arbeitsmaschine — optimiert, abgetrennt, funktional. Kochen wird zur Einzelarbeit.</p>
+          <p class="en">6.59 sqm. The kitchen becomes an efficient work machine — optimised, separated, functional. Cooking becomes a solitary task.</p>
+        </div>
+      </div>
+      <p class="shift"><em>Serielle Logik:</em> Seriell produziert und sozial gedacht — doch die Abtrennung der Küche vom Wohnraum beginnt eine räumliche Individualisierung. / <em>Serial logic:</em> Mass-produced and socially minded — yet separating the kitchen from the living space begins a spatial individualisation.</p>
+    </div>
+  </div>
+
+  <!-- 3. RADIO -->
+  <div class="object">
+    <div class="year-col">
+      <span class="year">1929</span>
+      <div class="dot"></div>
+      <div class="line"></div>
+    </div>
+    <div class="content">
+      <h2 class="object-name">Telefunken 40W</h2>
+      <p class="object-meta">Telefunken — Berlin</p>
+      <div class="image-box"><span class="placeholder">Telefunken 40W Radio</span></div>
+      <div class="before-after">
+        <div class="ba-block">
+          <span class="ba-label">Vorher / Before</span>
+          <p>Unterhaltung war körperlich und gemeinschaftlich — Musik wurde live gemacht, gemeinsam gespielt oder gehört.</p>
+          <p class="en">Entertainment was physical and communal — music was made live, played or heard together.</p>
+        </div>
+        <div class="ba-block">
+          <span class="ba-label">Nachher / After</span>
+          <p>Ein Radio im Wohnzimmer. Die ganze Familie versammelt sich um einen gemeinsamen Lautsprecher — Unterhaltung als kollektives Erlebnis.</p>
+          <p class="en">One radio in the living room. The whole family gathers around a shared speaker — entertainment as a collective experience.</p>
+        </div>
+      </div>
+      <p class="shift"><em>Serielle Logik:</em> Das Radio schafft noch Gemeinschaft — aber es ist der erste Schritt zur passiven, konsumierten Unterhaltung im Heim. / <em>Serial logic:</em> The radio still creates community — but it is the first step towards passive, consumed entertainment in the home.</p>
+    </div>
+  </div>
+
+  <!-- 4. TELEFON -->
+  <div class="object">
+    <div class="year-col">
+      <span class="year">1947</span>
+      <div class="dot"></div>
+      <div class="line"></div>
+    </div>
+    <div class="content">
+      <h2 class="object-name">Siemens W48</h2>
+      <p class="object-meta">Siemens & Halske — Deutschland</p>
+      <div class="image-box"><span class="placeholder">Siemens W48 Telefon</span></div>
+      <div class="before-after">
+        <div class="ba-block">
+          <span class="ba-label">Vorher / Before</span>
+          <p>Kommunikation war öffentlich — Telegramm, Brief, das Telefon beim Nachbarn oder im Geschäft.</p>
+          <p class="en">Communication was public — telegram, letter, the telephone at the neighbour's or at the shop.</p>
+        </div>
+        <div class="ba-block">
+          <span class="ba-label">Nachher / After</span>
+          <p>Ein Telefon im Flur. Ein fixer Ort der Kommunikation — alle hören mit, alle wissen wer anruft. Das Telefon ist noch ein gemeinschaftliches Objekt.</p>
+          <p class="en">One telephone in the hallway. A fixed place of communication — everyone listens, everyone knows who calls. The phone is still a shared object.</p>
+        </div>
+      </div>
+      <p class="shift"><em>Serielle Logik:</em> Der Flur als sozialer Raum — das Telefon gibt einem Ort eine neue Funktion und versammelt die Familie. / <em>Serial logic:</em> The hallway as social space — the telephone gives a place a new function and gathers the family.</p>
+    </div>
+  </div>
+
+  <!-- 5. FERNSEHER -->
+  <div class="object">
+    <div class="year-col">
+      <span class="year">1952</span>
+      <div class="dot"></div>
+      <div class="line"></div>
+    </div>
+    <div class="content">
+      <h2 class="object-name">Telefunken FE8</h2>
+      <p class="object-meta">Telefunken — erster deutscher Serien-Fernseher / first German mass-produced TV</p>
+      <div class="image-box"><span class="placeholder">Telefunken FE8 Fernseher</span></div>
+      <div class="before-after">
+        <div class="ba-block">
+          <span class="ba-label">Vorher / Before</span>
+          <p>Das Wohnzimmer war ein Raum der Begegnung — Gespräch, Spiel, gemeinsames Radio hören.</p>
+          <p class="en">The living room was a place of encounter — conversation, games, listening to the radio together.</p>
+        </div>
+        <div class="ba-block">
+          <span class="ba-label">Nachher / After</span>
+          <p>Der Fernseher wird zum Mittelpunkt des Wohnzimmers. Alle schauen in dieselbe Richtung — gemeinsam, aber schweigend.</p>
+          <p class="en">The television becomes the centre of the living room. Everyone looks in the same direction — together, but in silence.</p>
+        </div>
+      </div>
+      <p class="shift"><em>Serielle Logik:</em> Gemeinschaft, aber passiv. Der Fernseher organisiert den Raum um sich selbst — und beginnt das Gespräch zu ersetzen. / <em>Serial logic:</em> Community, but passive. The television organises the space around itself — and begins to replace conversation.</p>
+    </div>
+  </div>
+
+  <!-- 6. NOKIA -->
+  <div class="object">
+    <div class="year-col">
+      <span class="year">2000</span>
+      <div class="dot"></div>
+      <div class="line"></div>
+    </div>
+    <div class="content">
+      <h2 class="object-name">Nokia 3310</h2>
+      <p class="object-meta">Nokia — Finnland</p>
+      <div class="image-box"><span class="placeholder">Nokia 3310</span></div>
+      <div class="before-after">
+        <div class="ba-block">
+          <span class="ba-label">Vorher / Before</span>
+          <p>Das Haustelefon im Flur — ein Objekt, ein Ort, alle Familienmitglieder teilen es.</p>
+          <p class="en">The home telephone in the hallway — one object, one place, all family members share it.</p>
+        </div>
+        <div class="ba-block">
+          <span class="ba-label">Nachher / After</span>
+          <p>Jedes Familienmitglied hat ein eigenes Telefon. Kommunikation wird privat — und der Flur verliert seine soziale Funktion.</p>
+          <p class="en">Every family member has their own phone. Communication becomes private — and the hallway loses its social function.</p>
+        </div>
+      </div>
+      <p class="shift"><em>Serielle Logik:</em> Der erste große Bruch — das geteilte Objekt wird individuell. Der Raum, der es organisierte, verschwindet. / <em>Serial logic:</em> The first major break — the shared object becomes individual. The space that organised it disappears.</p>
+    </div>
+  </div>
+
+  <!-- 7. IPHONE -->
+  <div class="object">
+    <div class="year-col">
+      <span class="year">2007</span>
+      <div class="dot"></div>
+      <div class="line"></div>
+    </div>
+    <div class="content">
+      <h2 class="object-name">iPhone</h2>
+      <p class="object-meta">Apple — Cupertino</p>
+      <div class="image-box"><span class="placeholder">iPhone 2007</span></div>
+      <div class="before-after">
+        <div class="ba-block">
+          <span class="ba-label">Vorher / Before</span>
+          <p>Fernseher, Telefon, Kamera, Radio, Fotoalbum — jedes Objekt hatte seinen Platz im Raum.</p>
+          <p class="en">Television, telephone, camera, radio, photo album — every object had its place in the room.</p>
+        </div>
+        <div class="ba-block">
+          <span class="ba-label">Nachher / After</span>
+          <p>Alle diese Objekte verschwinden in einem Gerät — in der Tasche jedes Einzelnen. Der Raum verliert seine Objekte und damit seine Funktion als Treffpunkt.</p>
+          <p class="en">All these objects disappear into one device — in every individual's pocket. The space loses its objects, and with them its function as a meeting point.</p>
+        </div>
+      </div>
+      <p class="shift"><em>Serielle Logik:</em> Die totale Privatisierung. Jede Funktion, die einst einen gemeinsamen Raum brauchte, passt jetzt in eine Hosentasche. / <em>Serial logic:</em> Total privatisation. Every function that once required a shared space now fits in a pocket.</p>
+    </div>
+  </div>
+
+  <!-- 8. NETFLIX -->
+  <div class="object">
+    <div class="year-col">
+      <span class="year">2007</span>
+      <div class="dot"></div>
+      <div class="line"></div>
+    </div>
+    <div class="content">
+      <h2 class="object-name">Netflix Streaming</h2>
+      <p class="object-meta">Netflix — Los Gatos, Kalifornien</p>
+      <div class="image-box"><span class="placeholder">Netflix 2007</span></div>
+      <div class="before-after">
+        <div class="ba-block">
+          <span class="ba-label">Vorher / Before</span>
+          <p>Ein Fernseher im Wohnzimmer. Ein Programm für alle. Gemeinsam schauen war die einzige Möglichkeit.</p>
+          <p class="en">One television in the living room. One programme for everyone. Watching together was the only option.</p>
+        </div>
+        <div class="ba-block">
+          <span class="ba-label">Nachher / After</span>
+          <p>Jeder schaut was er will, wann er will, auf seinem eigenen Bildschirm. Das gemeinsame Fernsehen verschwindet — und mit ihm der letzte Grund, zusammen im Wohnzimmer zu sitzen.</p>
+          <p class="en">Everyone watches what they want, when they want, on their own screen. Shared viewing disappears — and with it the last reason to sit together in the living room.</p>
+        </div>
+      </div>
+      <p class="shift"><em>Serielle Logik:</em> Das Wohnzimmer verliert seinen letzten gemeinsamen Anker. Was bleibt, ist ein Raum ohne kollektive Funktion. / <em>Serial logic:</em> The living room loses its last shared anchor. What remains is a space without collective function.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>Serialität des Zuhauses — <span>Aranza V. Sánchez</span> — HfG Offenbach 2026</p>
+  <p style="margin-top: 0.5rem;">Im Modus der Serie — Museum Angewandte Kunst Frankfurt</p>
+</footer>
+
+</body>
+</html>
